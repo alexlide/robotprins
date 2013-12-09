@@ -1,0 +1,132 @@
+.empty_tile{
+	width: 70px;
+	height: 50px;
+	border: none;
+}
+
+.tile{
+	width: 70px;
+	height: 50px;
+	border: solid black 1px;
+}
+
+h1{
+	text-align: center;
+	font-size: 25;
+}
+
+body{font-family: verdana;}
+
+.main_img{margin-left: 10px;}
+
+#inventory{font-size: 12;}
+
+#wrapper{
+	margin: auto;
+	width: 370px;
+	border: solid #64D2E8 7px;
+	border-radius: 15px 15px;
+}
+
+#ph_div{
+	float: right;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#inventory_button{
+	float: left;
+	padding-left: 10px;
+	padding-bottom: 10px;
+}
+
+#inventory{
+	float: left;
+	padding: 5px;
+}
+
+#text_field{
+	width: 310px;
+	float: left;
+	padding-left: 10px;
+	padding-bottom: 10px;
+}
+
+#directions{
+	width: 200px;
+	margin: auto;
+}
+
+#textnbutton{
+	clear: both;
+}
+
+#button_div{
+	float: right;
+	padding-left: 5px;
+	padding-right: 10px;
+}
+
+#map_button{
+	clear: both;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	margin: auto;
+}
+
+#actions{
+	width: 340px;
+	clear: both;
+	margin: auto;
+}
+
+#map_table{
+	margin: auto;
+	font-size: 10;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+#location{text-align: center;}
+
+#skog_table{
+	padding: 0;
+	margin-left: 10px;
+}
+
+tr{
+	padding: 0;
+	margin: 0;
+}
+
+td{
+	padding: 0;
+	margin: 0;
+}
+
+table{
+	border-collapse: collapse;
+	margin-left: 10px;
+}
+
+select{
+	margin-bottom: 10px;
+}
+
+p{
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+
+#win_div, #loser_div{
+	margin:auto;
+	text-align: center;
+}
+
+#start{
+	margin-left: 100px;
+	margin-bottom: 25px;
+	margin-top: 15px;
+}
+
+#start_img{margin-left: 50px;}
