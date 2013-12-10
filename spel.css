@@ -12,14 +12,14 @@
 
 h1{
 	text-align: center;
-	font-size: 25;
+	font-size: 24;
 }
 
 body{font-family: verdana;}
 
 .main_img{
 	margin-left: 10px;
-	width: 330px;
+	width: 320px;
 }
 
 #inventory{font-size: 14;}
@@ -27,8 +27,8 @@ body{font-family: verdana;}
 #wrapper{
 	margin: auto;
 	width: 340px;
-	border: solid #64D2E8 7px;
-	border-radius: 15px 15px;
+	/*border: solid #64D2E8 7px;*/
+	/*border-radius: 15px 15px;*/
 }
 
 #ph_div{
