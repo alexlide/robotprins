@@ -23,7 +23,7 @@ body{font-family: verdana;}
 
 #wrapper{
 	margin: auto;
-	width: 470px;
+	width: 370px;
 	border: solid #64D2E8 7px;
 	border-radius: 15px 15px;
 }
@@ -75,7 +75,7 @@ body{font-family: verdana;}
 }
 
 #actions{
-	width: 340px;
+	width: 350px;
 	clear: both;
 	margin: auto;
 }
@@ -110,6 +110,7 @@ table{
 }
 
 select{
+	margin: 0;
 	margin-bottom: 10px;
 }
 

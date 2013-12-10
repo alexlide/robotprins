@@ -15,7 +15,7 @@
 		<div id="inventory" style="display:none;"></div>
 		<div id='ph_div' style="display:none;">pH: 7</div>
 		<div id='main'>
-			<img id="start_img" src="img/robotprins.jpg">
+			<img id="start_img" src="img/robotprins.png">
 		</div>
 		<div id="location"></div>
 		<div id="textnbutton">
@@ -220,8 +220,15 @@
 
 	function get_text(text){
 		$("#actions").empty();
+		console.log(current_loc);
+		console.log(current_step);
+		console.log(text);
 		if(current_loc == 'skog' && current_step == 7){
 			loc_status[current_loc] = 'done';
+		}
+		else if(current_loc == 'vattenfall' && current_step == 4 && text == 2){
+			ph = 14;
+			$("#ph_div").html('pH: '+ph);	
 		}
 		text = text || 0;
 		var next_text = text + 1;
@@ -230,20 +237,20 @@
 				'på med byxorna och ut på äventyr i fjärran land bär det.', 'hjälp robotprins att besegra ondman, men se till att han inte blir för sur. då blir det game over!'],
 			'skog0' : ['värst vad mörkt det var i skuggiga skogen.'],
 			'skog3' : ['men usch vilken läskig skog. allt ser argligt ut. vågar man titta närmare på nåt månn tro?'],
-			'skog7' : ['oj! det elaka ansiktet på stenen var bara ditmålat. robotprins ser att det står \'vad\' på baksidan av stenen. hmmmm. vad betyder \'vad\'?'],
+			'skog7' : ['oj! det elaka ansiktet på stenen var bara ditmålat. robotprins ser att det står "vad" på baksidan av stenen. hmmmm. vad betyder "vad"?'],
 			'vattenfall0' : ['det våta vattenfallet är vått och härligt. är det någon som tar sig en dusch där i?', 'jajamensannn. en av ondmans ondskefulla undersåtar står där nynnandes i sin födelsedagsdräkt och duschar på.', 'efter en kvart upptäcker han robotprins och den busen gillar inte att bli störd i duschen. dags för slagsmål!'],
-			'vattenfall4' : ['\'du har räddat mig från den onda förbannelsen. nu är jag en god man igen.\' tackar den spritt språngande mannen.', '\'och som goda män gör bjuder jag gärna på lite tvål\'. robotprins får en halv tvål.', 'robotprins kan givetvis inte motstå frestelsen och tar en mumsebit från tvålen. nu blev han basisk. upp med pH!'],
+			'vattenfall4' : ['"du har räddat mig från den onda förbannelsen. nu är jag en god man igen." tackar den spritt språngande mannen.', '"och som goda män gör bjuder jag gärna på lite tvål". robotprins får en halv tvål.', 'robotprins kan givetvis inte motstå frestelsen och tar en mumsebit från tvålen. nu blev han basisk. upp med pH!'],
 			'oken0' : ['öknen är både ökänd och ödslig och öcklig. en kaktus är din enda vän.', 'men vad är det där som ligger och skräpar? en förtorkad kaffeböna förstås. dags för upptagning!', 'inte fanns det något annat roligt här så man kan ju gå iväg. luktar lite kottigt dock.'],
-			'oken2' : ['kolla vilka spänstiga kottmuskler han har. \'spanar du in mina pang-pang-pinnar?\' fnystar han.', 'robotprins hinner inte svara innan kottenisse säger något annat.', '\'vet du hur jag blivit så här mucklig pucklig? jo, jag äter endast den bästa av rotfrukter\'', '\'vilken är den bästa av rotfrukter månne?\' frågar mr sexy kott. (speciellt bra om den är möglig).'],
-			'moln0' : ['ett fantastiskt moln som svävar över molnen och är mjöligt var det här. och en kista oxå!', 'robotprins har ingen nyckel så han tänkte banka upp den med näven.', '\'bäst att banka så många gånger som del av mig är robot eller prins\' tänker robotprins.', 'hur många gånger ska han banka?'],
-			'stuga0' : ['du finner en strutsig stuga och stugan har en dörr.', 'den öppnas av en mycket hungrig gubbstruts som tjuter så hemskt.', '\'äta, äta! jag vill ha något att äta!!!\'', 'ge något ätligt till gubbstrutsen?'],
-			'stuga4' : ['nu blev han glad och när han är glad vill han berätta hemligheter.', '\'bakom den mörkaste sten i skuggiga skogen står lösenordet till ondmans hydda\' viskar den gubbstruts.'],
-			'dal0' : ['i den dundrande dalen är det blixt och sånt där. men varför?', 'jo, minsanns och dars står en magisk mangubbe mitt däri och skjuter ljusestrålar omkring sig.', 'när han upptäcker robotprins stirrar han med dödestirren rätt i hans ögon, men vänder sen sitt blick mot dennes kompanjon.', '\'vad kallar du den metalliska efterrätt du har med dig?\' frågar mansmagikern med en sliskig röst.', '\'svara annars ljusar jag dig!\' väser magiman.'],
-			'hydda0' : ['vad är det här för något? ser ut som en väldigt ondsint hydda där någon ond gubbe kanske bor.', 'och framför står en ståtlig boll och vaktar. månske en vaktarbolle?', '\'nämen, hej och hopp\' hälsar bollen. \'visste ni att självaste ondman bor i denna hydda här bakom mig?\'', '\'han typ är här på semester i fjärran land och om han får lite tid över från sitt semestrande kanske han går ut och ondar ner hela stället\'', '\'jag tror hans spamassagelerterapigurkmacka precis håller på att ta slut. snart är det god tid för onderi\' nämner bollen angenämnt.', 'ajaj! det här må vi stoppa och robotprins är just mannen för detta.', '\'ur vägen, bollskalle! jag ska ge ondman ett kokande stryk!\' hojtar robotprins.', '\'tyvärr kan jag inte tillåta detta utan att du ger mig det korrekta lösenordet.\' konstaterar bollen.', '\'vad är lösenordet\''],
-			'hydda4' : ['robotprins ser ett par ondsinta ögon inifrån hyddan. ONDMAN!', '\'din envise lille parvel. alltid skall du vara till besvär för min härliga ondska\' bistrar ondman.', '\'nu vill jag slåss och vara ond!! slaxmål på dig!!!\' bräker ondman med sin mörkrets stämma.'],
-			'hydda7' : ['\'hahaha! det där gör ju typ inte alls ont liksom\' gormar ondman. \'typ kolla på det här istället.\''],
-			'hydda9' : ['\'neeeeej!! inte en magisk gyllene godhets slickepinn! den svider i mina elakhetsådror. men jag ger inte upp än!\' påstår ondman.'],
-			'hydda11' : ['än en gång faller rättvisans gyllene slickepinne rätt i pannehuvet på ondman från robotprins fasta hand.', '\'amen, liksom, aj typ!\' fjortar ondman. \'det var droppen! fakk dis!', 'ondman hoppar på sin flyktflotte och seglar ut på det där havet som var bredvid.', 'det verkar som om robotprins och robotpudding än en gång räddat en massa folkisar. bra jobbat!']
+			'oken2' : ['kolla vilka spänstiga kottmuskler han har. "spanar du in mina pang-pang-pinnar?" fnystar han.', 'robotprins hinner inte svara innan kottenisse säger något annat.', '"vet du hur jag blivit så här mucklig pucklig? jo, jag äter endast den bästa av rotfrukter"', '"vilken är den bästa av rotfrukter månne?" frågar mr sexy kott. (speciellt bra om den är möglig).'],
+			'moln0' : ['ett fantastiskt moln som svävar över molnen och är mjöligt var det här. och en kista oxå!', 'robotprins har ingen nyckel så han tänkte banka upp den med näven.', '"bäst att banka så många gånger som del av mig är robot eller prins" tänker robotprins.', 'hur många gånger ska han banka?'],
+			'stuga0' : ['du finner en strutsig stuga och stugan har en dörr.', 'den öppnas av en mycket hungrig gubbstruts som tjuter så hemskt.', '"äta, äta! jag vill ha något att äta!!!"', 'ge något ätligt till gubbstrutsen?'],
+			'stuga4' : ['nu blev han glad och när han är glad vill han berätta hemligheter.', '"bakom den mörkaste sten i skuggiga skogen står lösenordet till ondmans hydda" viskar den gubbstruts.'],
+			'dal0' : ['i den dundrande dalen är det blixt och sånt där. men varför?', 'jo, minsanns och dars står en magisk mangubbe mitt däri och skjuter ljusestrålar omkring sig.', 'när han upptäcker robotprins stirrar han med dödestirren rätt i hans ögon, men vänder sen sitt blick mot dennes kompanjon.', '"vad kallar du den metalliska efterrätt du har med dig?" frågar mansmagikern med en sliskig röst.', '"svara annars ljusar jag dig!" väser magiman.'],
+			'hydda0' : ['vad är det här för något? ser ut som en väldigt ondsint hydda där någon ond gubbe kanske bor.', 'och framför står en ståtlig boll och vaktar. månske en vaktarbolle?', '"nämen, hej och hopp" hälsar bollen. "visste ni att självaste ondman bor i denna hydda här bakom mig?"', '"han typ är här på semester i fjärran land och om han får lite tid över från sitt semestrande kanske han går ut och ondar ner hela stället"', '"jag tror hans spamassagelerterapigurkmacka precis håller på att ta slut. snart är det god tid för onderi" nämner bollen angenämnt.', 'ajaj! det här må vi stoppa och robotprins är just mannen för detta.', '"ur vägen, bollskalle! jag ska ge ondman ett kokande stryk!" hojtar robotprins.', '"tyvärr kan jag inte tillåta detta utan att du ger mig det korrekta lösenordet." konstaterar bollen.', '"vad är lösenordet"'],
+			'hydda4' : ['robotprins ser ett par ondsinta ögon inifrån hyddan. ONDMAN!', '"din envise lille parvel. alltid skall du vara till besvär för min härliga ondska" bistrar ondman.', '"nu vill jag slåss och vara ond!! slaxmål på dig!!!" bräker ondman med sin mörkrets stämma.'],
+			'hydda7' : ['"hahaha! det där gör ju typ inte alls ont liksom" gormar ondman. "typ kolla på det här istället."'],
+			'hydda9' : ['"neeeeej!! inte en magisk gyllene godhets slickepinn! den svider i mina elakhetsådror. men jag ger inte upp än!" påstår ondman.'],
+			'hydda11' : ['än en gång faller rättvisans gyllene slickepinne rätt i pannehuvet på ondman från robotprins fasta hand.', '"amen, liksom, aj typ!" fjortar ondman. "det var droppen! fakk dis!', 'ondman hoppar på sin flyktflotte och seglar ut på det där havet som var bredvid.', 'det verkar som om robotprins och robotpudding än en gång räddat en massa folkisar. bra jobbat!']
 		};
 		$("#text_field").html(all_texts[current_loc+current_step][text]);
 		if(next_text == all_texts[current_loc+current_step].length){
@@ -275,8 +282,6 @@
 				current_step = 4;
 				inventory.push('en halv tvål');
 				loc_status[current_loc] = 'done';
-				ph = 14;
-				$("#ph_div").html('pH: '+ph);	
 			}
 			else{
 				$("#text_field").html('robotprins boxar ondingen i bröstvårtan, men det gör honom bara argare.');
@@ -329,12 +334,12 @@
 	function check_choice(element, answer){
 		if(element.options[element.selectedIndex].value == answer){
 			if(current_loc == 'stuga'){
-				$("#text_field").html('\'en förtorkad kaffeböna! det är det jag vill haaaAaAaa!!\' hojtar gubbstrutsen.');
+				$("#text_field").html('"en förtorkad kaffeböna! det är det jag vill haaaAaAaa!!" hojtar gubbstrutsen.');
 				current_step = 4;
 				loc_status[current_loc] = 'done';
 			}
 			else if(current_loc == 'oken'){
-				$("#text_field").html('\'rätt!\' ropar le fancy quott och flyger rätt över robotprins huvud och tappar sina coola kalsingar. de passar perfekt!');
+				$("#text_field").html('"rätt!" ropar le fancy quott och flyger rätt över robotprins huvud och tappar sina coola kalsingar. de passar perfekt!');
 				inventory.push('coola kalsingar');
 				current_step = 4;		
 				loc_status[current_loc] = 'done';
@@ -346,24 +351,24 @@
 				loc_status[current_loc] = 'done';
 			}			
 			else if(current_loc == 'dal'){
-				$("#text_field").html('\'äntligen har jag svaret!\' utbrister den lille man av magi. som tack får du en lavalampa. de var på rea.');
+				$("#text_field").html('"äntligen har jag svaret!" utbrister den lille man av magi. som tack får du en lavalampa. de var på rea.');
 				current_step = 3;
 				inventory.push('lavalampa');
 				loc_status[current_loc] = 'done';
 			}
 			else if(current_loc == 'hydda'){
-				$("#text_field").html('\'ja, det var ju precis det jag sa. nu ska jag inte stå ivägen längre utan tar själv lite välförtjänt semester\' tycker bollen och studsar iväg.');
+				$("#text_field").html('"ja, det var ju precis det jag sa. nu ska jag inte stå ivägen längre utan tar själv lite välförtjänt semester" tycker bollen och studsar iväg.');
 				$("#main").html('<img class="main_img" src="img/hydda1.png">');
 				current_step = 4;
 			}
 		}
 		else{
 			if(current_loc == 'stuga'){
-				$("#text_field").html('gubbstrutsen gillade visst inte maten. \'nej, nu får du inte lätt\' ropar han med sin strutsiga röst.');
+				$("#text_field").html('gubbstrutsen gillade visst inte maten. "nej, nu får du inte lätt" ropar han med sin strutsiga röst.');
 				current_step = 2;
 			}
 			else if(current_loc == 'oken'){
-				$("#text_field").html('\'fel!\' ropar le fancy quott och flyger iväg åt andra hållet. robotprins ser att han tappar nåt i fjärran, men orkar inte gå bort och kolla vad det är.');
+				$("#text_field").html('"fel!" ropar le fancy quott och flyger iväg åt andra hållet. robotprins ser att han tappar nåt i fjärran, men orkar inte gå bort och kolla vad det är.');
 				current_step = 4;
 				loc_status[current_loc] = 'done';
 			}
@@ -374,11 +379,11 @@
 				current_step = 2;
 			}
 			else if(current_loc == 'dal'){
-				$("#text_field").html('\'nä, det känns helt fel\' grymtar den magiske mannen och skjuter ljus på robotprins. har ingen större effekt så han prövar nåt annat.');			
+				$("#text_field").html('"nä, det känns helt fel" grymtar den magiske mannen och skjuter ljus på robotprins. har ingen större effekt så han prövar nåt annat.');			
 				current_step = 2;
 			}				
 			else if(current_loc == 'hydda'){
-				$("#text_field").html('\'nä, det där var inte alls så snällt sagt. det ska du ångra och här ska du få\' flämtar bollen.');			
+				$("#text_field").html('"nä, det där var inte alls så snällt sagt. det ska du ångra och här ska du få" flämtar bollen.');			
 				current_step = 2;
 			}	
 		}
@@ -432,7 +437,7 @@
 			surhet = 2;
 		}
 		else{
-			$("#text_field").html(surgubbar[current_loc]+' kastar '+surisar[Math.floor(Math.random() * 6)]+' i fejan på robotprins som blir sur. pH - 1!');
+			$("#text_field").html(surgubbar[current_loc]+' kastar '+surisar[Math.floor(Math.random() * 6)]+' i fejan på robotprins som blir sur. <br> pH - 1!');
 			surhet = 1;
 		}
 		ph = ph - surhet;
