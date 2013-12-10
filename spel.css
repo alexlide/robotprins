@@ -22,11 +22,11 @@ body{font-family: verdana;}
 	width: 330px;
 }
 
-#inventory{font-size: 12;}
+#inventory{font-size: 14;}
 
 #wrapper{
 	margin: auto;
-	width: 350px;
+	width: 340px;
 	border: solid #64D2E8 7px;
 	border-radius: 15px 15px;
 }
@@ -49,11 +49,11 @@ body{font-family: verdana;}
 }
 
 #text_field{
-	width: 290px;
+	width: 280px;
 	float: left;
 	padding-left: 10px;
 	padding-bottom: 10px;
-	font-size: 12;
+	font-size: 14;
 }
 
 #directions{
