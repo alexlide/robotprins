@@ -17,13 +17,16 @@ h1{
 
 body{font-family: verdana;}
 
-.main_img{margin-left: 10px;}
+.main_img{
+	margin-left: 10px;
+	width: 330px;
+}
 
 #inventory{font-size: 12;}
 
 #wrapper{
 	margin: auto;
-	width: 370px;
+	width: 350px;
 	border: solid #64D2E8 7px;
 	border-radius: 15px 15px;
 }
@@ -46,10 +49,11 @@ body{font-family: verdana;}
 }
 
 #text_field{
-	width: 310px;
+	width: 290px;
 	float: left;
 	padding-left: 10px;
 	padding-bottom: 10px;
+	font-size: 12;
 }
 
 #directions{
