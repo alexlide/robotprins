@@ -121,6 +121,8 @@ select{
 	margin-left: 10px;
 }
 
+select, option{ width: 100px;}
+
 p{
 	margin-top: 7px;
 	margin-bottom: 7px;
