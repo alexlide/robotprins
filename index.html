@@ -103,7 +103,7 @@
 				$("#main").html(skog);
 			}
 			else if(loc_status[current_loc] == 'done'){
-				$("#main").html('<img src="img/skog5.png">');
+				$("#main").html('<img class="main_img" src="img/skog5.png">');
 			}
 		}
 		else{
@@ -412,6 +412,7 @@
 		current_step = step;
 		if(current_loc == 'skog' && current_step == 7){
 			inventory.push('vad-lappen');
+			$("#main").html('<img class="main_img" src="img/skog5.png">');
 		}
 	}
 
