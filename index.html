@@ -99,7 +99,7 @@
 				$("#main").html('<img class="main_img" src="img/skugg.png">');
 			}
 			else if(loc_status[current_loc] == 'advance'){
-				var skog = '<table> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> <td rowspan="2"><img onclick=set_step(5), "'+actions[current_loc][5]+'()", src="img/skog4.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				var skog = '<table> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
 				$("#main").html(skog);
 			}
 			else if(loc_status[current_loc] == 'done'){
@@ -266,7 +266,7 @@
 		if(current_loc == 'skog'){
 			if($.inArray('lavalampa', inventory) > -1){
 				$("#text_field").html('vilken tur att robotprins har en fin lavalampa. nu ser man desto bättre.');
-				var skog = '<table id="skog_table"> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> <td rowspan="2"><img onclick=set_step(5), "'+actions[current_loc][5]+'()", src="img/skog4.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				var skog = '<table id="skog_table"> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
 				$("#main").html(skog);
 				current_step = 3;
 				loc_status[current_loc] = 'advance';
