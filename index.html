@@ -98,9 +98,14 @@
 			if(loc_status[current_loc] == 'none' || loc_status[current_loc] == 'been'){
 				$("#main").html('<img class="main_img" src="img/skugg.png">');
 			}
-			else{
+			else if(loc_status[current_loc] == 'advance'){
 				var skog = '<table> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> <td rowspan="2"><img onclick=set_step(5), "'+actions[current_loc][5]+'()", src="img/skog4.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
 				$("#main").html(skog);
+			}
+			else if(loc_status[current_loc] == 'done'){
+				var skog = '<table> <tr> <td rowspan="2"><img src="img/skog1.png"></td> <td><img src="img/skog2.png"></td> <td rowspan="2"><img src="img/skog4.png"></td> </tr> <tr> <td><img src="img/skog3.png"></td> </tr> </table>';
+				$("#main").html(skog);
+
 			}
 		}
 		else{
