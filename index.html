@@ -220,9 +220,6 @@
 
 	function get_text(text){
 		$("#actions").empty();
-		console.log(current_loc);
-		console.log(current_step);
-		console.log(text);
 		if(current_loc == 'skog' && current_step == 7){
 			loc_status[current_loc] = 'done';
 		}
@@ -237,7 +234,7 @@
 				'på med byxorna och ut på äventyr i fjärran land bär det.', 'hjälp robotprins att besegra ondman, men se till att han inte blir för sur. då blir det game over!'],
 			'skog0' : ['värst vad mörkt det var i skuggiga skogen.'],
 			'skog3' : ['men usch vilken läskig skog. allt ser argligt ut. vågar man titta närmare på nåt månn tro?'],
-			'skog7' : ['oj! det elaka ansiktet på stenen var bara ditmålat. robotprins ser att det står "vad" på baksidan av stenen. hmmmm. vad betyder "vad"?'],
+			'skog7' : ['oj! det elaka ansiktet på stenen var bara ditmålat. på baksidan sitter en lapp som det står "vad" på. bäst att plocka upp. hmmmm. vad betyder "vad"?'],
 			'vattenfall0' : ['det våta vattenfallet är vått och härligt. är det någon som tar sig en dusch där i?', 'jajamensannn. en av ondmans ondskefulla undersåtar står där nynnandes i sin födelsedagsdräkt och duschar på.', 'efter en kvart upptäcker han robotprins och den busen gillar inte att bli störd i duschen. dags för slagsmål!'],
 			'vattenfall4' : ['"du har räddat mig från den onda förbannelsen. nu är jag en god man igen." tackar den spritt språngande mannen.', '"och som goda män gör bjuder jag gärna på lite tvål". robotprins får en halv tvål.', 'robotprins kan givetvis inte motstå frestelsen och tar en mumsebit från tvålen. nu blev han basisk. upp med pH!'],
 			'oken0' : ['öknen är både ökänd och ödslig och öcklig. en kaktus är din enda vän.', 'men vad är det där som ligger och skräpar? en förtorkad kaffeböna förstås. dags för upptagning!', 'inte fanns det något annat roligt här så man kan ju gå iväg. luktar lite kottigt dock.'],
@@ -258,7 +255,7 @@
 			$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
 		}
 		else{
-			$("#button_div").html('<img src="img/next.png" onclick="get_text('+next_text+');">')
+			$("#button_div").html('<img src="img/ok.png" onclick="get_text('+next_text+');">')
 		}
 	}
 
@@ -266,7 +263,7 @@
 		if(current_loc == 'skog'){
 			if($.inArray('lavalampa', inventory) > -1){
 				$("#text_field").html('vilken tur att robotprins har en fin lavalampa. nu ser man desto bättre.');
-				var skog = '<table> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> <td rowspan="2"><img onclick=set_step(5), "'+actions[current_loc][5]+'()", src="img/skog4.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				var skog = '<table id="skog_table"> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> <td rowspan="2"><img onclick=set_step(5), "'+actions[current_loc][5]+'()", src="img/skog4.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
 				$("#main").html(skog);
 				current_step = 3;
 				loc_status[current_loc] = 'advance';
@@ -322,7 +319,7 @@
 			$("#actions").html('<select id="dal_dropdown" onchange="check_choice(this, \'robotpudding\')"><option>välj</option><option>maskintårta</option><option>robotpudding</option><option>wienerbröddz</option></select>');				
 		}
 		else if(current_loc == 'hydda'){
-			if(loc_status['skog'] == 'done'){
+			if($.inArray('vad-lappen', inventory) > -1){
 				$("#actions").html('<select id="hydda_dropdown" onchange="check_choice(this, \'vad\')"><option>välj</option><option>vad</option><option>vad</option><option>vad</option></select>');							
 			}
 			else{
@@ -410,10 +407,12 @@
 
 	function set_step(step){
 		current_step = step;
+		if(current_loc == 'skog' && current_step == 7){
+			inventory.push('vad-lappen');
+		}
 	}
 
 	function starta(){
-		console.log('på fuskhumör? pröva inventory.push(\'super bazooka\')');
 		current_loc = 'hotell';
 		current_step = 0;
 		$("#inventory_button").show();
@@ -513,6 +512,7 @@
 				$("#win_div").append('<p>+ robotprins har grymt coola kalsingar på sig ;)</p>');
 			}
 		}
+		$("#win_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
 	}
 
 	function game_over(){
@@ -520,6 +520,7 @@
 		if($.inArray('coola kalsingar', inventory) > -1){
 			$("#loser_div").append('<p>men robotprins har iaf grymt coola kalsingar på sig.</p>');
 		}
+		$("#loser_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
 	}
 
 </script>
