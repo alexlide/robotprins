@@ -103,9 +103,7 @@
 				$("#main").html(skog);
 			}
 			else if(loc_status[current_loc] == 'done'){
-				var skog = '<table> <tr> <td rowspan="2"><img src="img/skog1.png"></td> <td><img src="img/skog2.png"></td> <td rowspan="2"><img src="img/skog4.png"></td> </tr> <tr> <td><img src="img/skog3.png"></td> </tr> </table>';
-				$("#main").html(skog);
-
+				$("#main").html('<img src="img/skog5.png">');
 			}
 		}
 		else{
@@ -448,6 +446,9 @@
 		$("#ph_div").html('pH: '+ph);
 		if(ph < 5){
 			$("#text_field").append(' robotprins blir så sur att han springer hem och gråter i sängen.');
+			if(current_loc == 'skog'){
+				$("#main").html('<img src="img/skog5.png">');
+			}
 			$("#button_div").html('<img src="img/ok.png" onclick="game_over();">');
 			$("#actions").empty();
 		}
