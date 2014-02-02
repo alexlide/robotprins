@@ -1,0 +1,549 @@
+<script src="jquery-latest.js"></script>
+
+<html>
+<head>
+	<title>Robotprins - The spelet!</title>
+	  <link href="spel.css" rel="stylesheet" type="text/css">
+	<meta charset="utf-8"/>
+</head>
+<body>
+	<div id='wrapper'>
+		<h1><img style="width:340px" src="img/title.png"></h1>
+		<div id="inventory_button" style="display:none;">
+			<img src="img/inventory.png" onclick="show_inventory()">
+		</div>
+		<div id="inventory" style="display:none;"></div>
+		<div id='ph_div' style="display:none;">pH: 7</div>
+		<div id='main'>
+			<img id="start_img" src="img/robotprins.png">
+		</div>
+		<div id="location"></div>
+		<div id="textnbutton">
+			<div id='text_field'></div>
+			<div id='button_div'></div>
+		</div>
+		<div id='actions'>
+			<img id="start" src="img/start.png" onclick="starta()">
+		</div>
+		<div id="map_button" style="display:none;">
+			<img src="img/map.png"  onclick="show_map()">
+		</div>
+		<div id="map_div" style="display:none;">
+			<table id="map_table">
+				<tr>
+					<td class="empty_tile"></td>
+					<td id="hydda" class="tile">Ondmans hut!</td>
+					<td class="empty_tile"></td>
+				</tr>
+				<tr>
+					<td id="oken" class="tile">The infamous desert</td>
+					<td id="stuga"  class="tile">The ostrich cabin</td>
+					<td id="dal" class="tile">The thundering valley</td>
+				</tr>				
+				<tr>
+					<td id="vattenfall" class="tile">The wet waterfall</td>
+					<td id="skog" class="tile">The shadowy forest</td>
+					<td id="moln" class="tile">The floury cloud</td>
+				</tr>
+				<tr>
+					<td class="empty_tile"></td>
+					<td id="hotell" class="tile">The homey hotel</td>
+					<td class="empty_tile"></td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+	<div id="hidden_div" style="display: none;">
+		<img src="img/dal.png">
+		<img src="img/hotell.png">
+		<img src="img/hydda.png">
+		<img src="img/hydda1.png">
+		<img src="img/moln.png">
+		<img src="img/oken.png">
+		<img src="img/oken1.png">
+		<img src="img/oken2.png">
+		<img src="img/skog1.png">
+		<img src="img/skog2.png">
+		<img src="img/skog3.png">
+		<img src="img/skog5.png">
+		<img src="img/skugg.png">
+		<img src="img/stuga.png">
+		<img src="img/vattenfall.png">
+	</div>
+</body>
+</html>
+
+<script>
+	var current_loc;
+	var current_step;
+	var ph = 7;
+	var inventory = [];
+	var actions = {
+		'hotell' : ['get_text', 'directions'],
+		'skog' : ['get_text', 'check_inventory', 'directions', 'get_text', 'directions', 'sur', 'directions', 'get_text', 'directions'],
+		'vattenfall' : ['get_text', 'check_inventory', 'sur', 'directions', 'get_text', 'directions'],
+		'stuga' : ['get_text', 'choices', 'sur', 'directions', 'get_text', 'directions'],
+		'moln' : ['get_text', 'choices', 'directions'],
+		'oken' : ['get_text', 'directions', 'get_text', 'choices', 'directions'],
+		'dal' : ['get_text', 'choices', 'sur', 'directions'],
+		'hydda' : ['get_text', 'choices', 'sur', 'directions', 'get_text', 'sur', 'check_inventory', 'get_text', 'sur', 'get_text', 'sur', 'get_text', 'win']
+	};
+	var loc_status = {
+		'hotell' : 'none',
+		'skog' : 'none',
+		'vattenfall' : 'none',
+		'stuga' : 'none',
+		'moln' : 'none',
+		'oken' : 'none',
+		'dal' : 'none',
+		'hydda' : 'none'
+	}
+	var long_name = {
+		'hotell' : 'The homey hotel',
+		'skog' : 'The shadowy forest',
+		'vattenfall' : 'The wet waterfall',
+		'stuga' : 'The ostrich cabin',
+		'moln' : 'The floury cloud',
+		'oken' : 'The infamous desert',
+		'dal' : 'The thundering valley',
+		'hydda' : 'Ondmans hut!'
+	}
+
+	function arrive(){
+		$("#actions").empty();
+		if(current_loc == 'skog'){
+			if(loc_status[current_loc] == 'none' || loc_status[current_loc] == 'been'){
+				$("#main").html('<img class="main_img" src="img/skugg.png">');
+			}
+			else if(loc_status[current_loc] == 'advance'){
+				var skog = '<table> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				$("#main").html(skog);
+			}
+			else if(loc_status[current_loc] == 'done'){
+				$("#main").html('<img class="main_img" src="img/skog5.png">');
+			}
+		}
+		else{
+			$("#main").html('<img id="img_'+current_loc+'"" src="img/'+current_loc+'.png" class="main_img">');
+		}
+		$("#location").html('<p><strong>'+long_name[current_loc]+'</strong></p>');
+		if($.inArray('super bazooka', inventory) > -1){
+			$("#text_field").html('robotprins blows everything up with his super bazooka and gets a thousand bucks');
+			inventory.push('a thousand bucks');
+			if(current_loc == 'hydda'){
+				$("#button_div").html('<img src="img/ok.png" onclick="win(true);">');
+			}
+			else{
+				$("#button_div").html('<img src="img/ok.png" onclick="directions();">');				
+			}
+		}
+		else{
+			none = this.check_loc_status();
+			if(none){
+				var function_name = actions[current_loc][0];
+				var fn = window[function_name];
+				if(typeof fn === 'function') {
+				    fn();
+				}
+			}
+		}
+	}
+
+	function check_loc_status(){
+		if(loc_status[current_loc] == 'none'){
+			loc_status[current_loc] = 'been';
+			if(current_loc == 'oken'){
+				inventory.push('a dried up coffeebean');
+			}
+			return true;
+		}
+		else if(loc_status[current_loc] == 'been'){
+			if(current_loc == 'skog'){
+				$("#text_field").html('it\'s like totally dark in the forest.');
+				current_step = 1;				
+			}
+			else if(current_loc == 'hotell'){
+				$("#text_field").html('the homey hotel is incredibly wonderous and homey.');
+				if($.inArray('half a bar of soap', inventory) > -1 && ph < 14){
+					$("#text_field").append(' robotprins takes a chomp out of his soap and it he turns basic. pH is sikkk!');
+					ph = 14;
+				}
+				else if(ph < 7){
+					$("#text_field").append(' robotprins takes a quick nap and his pH goes up to a neat 7.');
+					ph = 7;
+				}
+				$("#ph_div").html('pH: '+ph);
+				current_step = 1;
+			}
+			else if(current_loc == 'stuga'){
+				$("#text_field").html('oldie ostrich is hungry. be a nice robotprins and give him a bit of yummy food.');
+				current_step = 1;
+			}
+			else if(current_loc == 'oken'){
+				$("#main").html('<img id="img_'+current_loc+'"" src="img/oken1.png" class="main_img">');
+				$("#text_field").html('my oh my! there seems to be some kind of super-hedge-hero-man-hog in the desert.');
+				current_step = 2;			
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('upon yonder cloud ye olde chest waits for some punchipunchi.');
+				current_step = 1;
+			}
+			else if(current_loc == 'dal'){
+				$("#text_field").html('magical men are infamous for their stubborness concerning questioning. what is the the name of robotprins\' companion?');
+				current_step = 1;
+			}
+			else if(current_loc == 'vattenfall'){
+				$("#text_field").html('mr bad guy is still naked and furious. time for some more brawling.');
+				current_step = 1;
+			}	
+			else if(current_loc == 'hydda'){
+				$("#text_field").html('the polite ballguard greets robotprins with a grin and once again asks: \'what is the password\'');
+				current_step = 1;
+			}			
+		}
+		else if(loc_status[current_loc] == 'advance'){
+			if(current_loc == 'skog'){
+				$("#text_field").html('dis be some scary stuff. do you dare poke the intimidating forest?');
+				current_step = 4;
+			}
+		}
+		else if(loc_status[current_loc] == 'done'){
+			if(current_loc == 'skog'){
+				$("#text_field").html('the forest does not appear as scary as before.');
+				current_step = 8;
+			}
+			else if(current_loc == 'stuga'){
+				$("#text_field").html('oldie ostrich seems to be full and contented.');
+				current_step = 5;
+			}
+			else if(current_loc == 'oken'){
+				$("#text_field").html('barren is the desert. it yearns for companionship, something it won\'t receive from robotprins as he walks away.');
+				$("#main").html('<img id="img_'+current_loc+'"" src="img/oken2.png" class="main_img">');
+				current_step = 4;			
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('upon the cloud the chest is gaping open. does it not know shame?');
+				current_step = 2;
+			}
+			else if(current_loc == 'dal'){
+				$("#text_field").html('the thunder and lightening never seems to end in the valley. party in da haus foreverz!!!');
+				current_step = 3;
+			}
+			else if(current_loc == 'vattenfall'){
+				$("#text_field").html('the dude in the waterfall is now a good guy, but he is still naked and angry as he just got some water up his nose.');
+				current_step = 3;
+			}				
+		}
+		$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		return false;
+	}
+
+	function get_text(text){
+		$("#actions").empty();
+		if(current_loc == 'skog' && current_step == 7){
+			loc_status[current_loc] = 'done';
+		}
+		else if(current_loc == 'vattenfall' && current_step == 4 && text == 2){
+			ph = 14;
+			$("#ph_div").html('pH: '+ph);	
+		}
+		text = text || 0;
+		var next_text = text + 1;
+		var all_texts = {
+			'hotell0' : ['robotprins and his faithful companion robotpudding are on vacation in a faraway country.', 'finally the some well-deserved rest from evil meanies that annoying them with their malignity', 'the homey hotel, where they are staying, is like supercozy with like a huge flatscreen TV that is always turned on.', 'dang and doodles! from said TV the news of ondmans arrival to faraway land blurts out.', 'this is totally NOT good, robotprins thinks to himself. I\'d better go save some world now.', 'time for adventure! you gots to helps robotprins defeat ondman, but keep a close watch on his pH because if robotprins becomes to sour it\'s game over!'],
+			'skog0' : ['the shadowy forest is quite dark. one might even call it pitch-black.'],
+			'skog3' : ['yikes in the henhouse! everything looks rather vicious. does one dare to take a close look perhaps?'],
+			'skog7' : ['hey! that mean face was only painted on that rock. on the backside of it there is a note that says "what". better pick it up. what does "what" mean?'],
+			'vattenfall0' : ['the wet waterfall is wet and wonderful. is someone enjoying a cool shower under it\'s cool droplets?', 'yes, indeed. one of ondmans henchman stands there humming joyfully in nothing but his birthday suit.', '15 mins later he notices robotprins\' prying glares and the rapscallion does not like to be disturbed during showertime. get ready to rumble!!!'],
+			'vattenfall4' : ['"thanks to you I have been saved from the evil curse and is once again a nice guy." the bucknacked fellow proclaims.', '"and now I will give you some soap as that is a common practice among nice guys ". robotprins gets half a bar of soap.', 'robotprins obviously can\'t resist the temptation of taking a bite of the soap. now he is basic. pH goes way up!'],
+			'oken0' : ['the desert is both infamous and inhabited and igly. a cactus is your only friend.', 'but what is that gorgeous crap lying on the sandy ground? a perfect specimen of a dried up coffeebean ready for picking upping is what is is. let\'s do!', 'that was all the fun there was to be had in the desert. but here is a faint hedgy smell in the air. or is that hoggy?'],
+			'oken2' : ['look at those flexible hogmuscles. "are you checking out my bang-bang-bazookas?" he snorts.', 'there is no time for robotprins to answer before the hoggy man says something else.', '"do you know how I\'ve become this mucho macho? I only eat the best of roots, that is how."', '"which would be this best of roots you think?" mr sexy hog asks. (the is best served moldy).'],
+			'moln0' : ['robotprins arrives at a marvelous cloud that soars above the clouds and is very floury. and it carries a chest!', 'robotprins owns no key but the solution is simple. he will punch the chest open.', '"I\'d better punch as many times as I am robot and prince" robotprins reckons.', 'how many times should he punch the chest?'],
+			'stuga0' : ['robotprins stumbles upon a ostrichy cabin. the cabin has a door.', 'the door is opened by a very hungry oldie ostrich and he is screeching at the top of his lungs.', '"eat, eat! I want something to eat!!!"', 'give oldie ostrich something edible?'],
+			'stuga4' : ['oldie ostrich is now pleased and when he is pleased he enjoys telling secrets.', '"the darkest of stones in the shadowy forest holds the secret to entering ondmans hut" oldie ostrich whispers gently in robotprins\' metallic ear.'],
+			'dal0' : ['in the thundering valley there are lots of lightnings and stuff. but why?', 'the answer is that a magical manguy is shooting beams and lazers in the air.', 'when he notices robotprins\' precense he looks at him with a deathly stare, but soon averts his gaze upon robotprins\' sidekick.', '"what do you can the metallic dessert by your side?" the manmagician asks with a sleezy voice.', '"answer or I will light you!" magicman hisses.'],
+			'hydda0' : ['what is this for something? looks like a pretty evily hut where someone evil might live.', 'in front of the hut a handsome ball stand guard. a guarderball perhaps?', '"deary me, hi there and hello" the ball greets robotprins. "are you aware that the one and only ondman resides within the hut behind me?"', '"faraway country is his favorite vacation spot and would he get some spare time from his vacationing he might just go outside and evil up the premises"', '"I believe his spa massage therapy cucumber sandwich is about to finish so quite soon it will be evil time." the ball politely mentions.', 'dear daniels dingo! we can\'t let ondman loose on this beautiful country, but luckily robotprins is just the man to stop him.', '"outta my way, ballface! I\'ll give that ondman a beating he will soon forget!" robotprins procounces.', '"unfortunatly I can\'t let you do that unless you give the correct password." the ball explains.', '"what is the password"'],
+			'hydda4' : ['robotprins spots a pair of vicious eyes from within the hut. ONDMAN!', '"you stubborn nincompoop. why must you always disturb my wonderous wickedness" ondman sulks.', '"I want to fight and be evil!! fisticuffs on you!!!" ondman bellows in his darkest voice.'],
+			'hydda7' : ['"hahaha! that totally like doesn\'t hurt at all" ondman rants. "like check out my fierce comeback. all kapow and stuff!"'],
+			'hydda9' : ['"nooooo!! not the golden lollipop of good and kindness!! it stings my dark veins of baddity. but I will not give up quite yet!" ondman claims.'],
+			'hydda11' : ['yet again the golden lollipop of justice falls upon the head of ondman by robotprins\' firm hand.', '"but, like, come oooon. that totally hurts, man!" ondman guicks. "that\'s it! fakk dis!"', 'ondman hops upon his escape raft and sails out on the wide blue ocean just beside him.', 'it seems as if robotprins and robotpudding once again saved a bunch of people guys and you help them do it. good job!']
+		};
+		$("#text_field").html(all_texts[current_loc+current_step][text]);
+		if(next_text == all_texts[current_loc+current_step].length){
+			current_step = current_step + 1;
+			$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		}
+		else{
+			$("#button_div").html('<img src="img/ok.png" onclick="get_text('+next_text+');">')
+		}
+	}
+
+	function check_inventory(){
+		if(current_loc == 'skog'){
+			if($.inArray('a lava lamp', inventory) > -1){
+				$("#text_field").html('we\'re in luck as robotprins has a fully functioning lava lamp. now the forest is perfectly seeable.');
+				var skog = '<table id="skog_table"> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				$("#main").html(skog);
+				current_step = 3;
+				loc_status[current_loc] = 'advance';
+			}
+			else{
+				$("#text_field").html('way to dark to do anything here. sucks. let\'s go somewhere brighter.');
+				current_step = 2;
+			}
+		}
+		else if(current_loc == 'vattenfall'){
+			if($.inArray('a golden lollipop', inventory) > -1){
+				$("#text_field").html('robotprins beats the bad guy in the head with the golden lollipop and it turns out the lollipop is magic and that it turns bad guys into good guys.');
+				current_step = 4;
+				inventory.push('half a bar of soap');
+				loc_status[current_loc] = 'done';
+			}
+			else{
+				$("#text_field").html('robotprins punches the bad guy in the nipple. this only enrages him further.');
+				current_step = 2;
+			}
+		}
+		else if(current_loc == 'hydda'){
+			if($.inArray('a golden lollipop', inventory) > -1){	
+				$("#text_field").html('robotprins hits ondman with his golden lollipop. that seems lika a good plan as ondman gets bummed out by it.');
+				current_step = 9;
+			}
+			else{
+				$("#text_field").html('robotprins flings his sissy hands at ondman.');
+				current_step = 7;
+			}
+		}
+		$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		$("#inventory").html(inventory.toString());
+	}
+
+	function choices(){
+		$("#button_div").empty();	
+		if(current_loc == 'stuga'){
+			if($.inArray('a dried up coffeebean', inventory) > -1){
+				$("#actions").html('<select id="stuga_dropdown" onchange="check_choice(this, \'a dried up coffeebean\')"><option>choose</option><option>a dessert</option><option>an omelet</option><option>a dried up coffeebean</option></select>');		
+			}
+			else{
+				$("#actions").html('<select id="stuga_dropdown" onchange="check_choice(this, \'en förtorkad kaffeböna\')"><option>choose</option><option>a dessert</option><option>an omelet</option><option>a cigarette</option></select>');
+			}
+		}
+		else if(current_loc == 'oken'){
+			$("#actions").html('<select id="oken_dropdown" onchange="check_choice(this, \'potato\')"><option>choose</option><option>potato</option><option>palsternack</option><option>rock</option></select>');
+		}
+		else if(current_loc == 'moln'){
+			$("#actions").html('<select id="moln_dropdown" onchange="check_choice(this, \'half a time\')"><option>choose</option><option>half a time</option><option>one time</option><option>15 times</option></select>');		
+		}
+		else if(current_loc == 'dal'){
+			$("#actions").html('<select id="dal_dropdown" onchange="check_choice(this, \'robotpudding\')"><option>choose</option><option>machinecake</option><option>robotpudding</option><option>wienerbröddz</option></select>');				
+		}
+		else if(current_loc == 'hydda'){
+			if($.inArray('a note that says "what"', inventory) > -1){
+				$("#actions").html('<select id="hydda_dropdown" onchange="check_choice(this, \'what\')"><option>choose</option><option>what</option><option>what</option><option>what</option></select>');							
+			}
+			else{
+				$("#actions").html('<select id="hydda_dropdown" onchange="check_choice(this, \'what\')"><option>choose</option><option>balls smell like donkey ass. especially red ones.</option><option>helmets are the ugliest things in the world. except for balls of course.</option><option>you are stupid inside the head, balldorkpoopsissyface!</option></select>');							
+			}
+		}
+	}
+
+	function check_choice(element, answer){
+		if(element.options[element.selectedIndex].value == answer){
+			if(current_loc == 'stuga'){
+				$("#text_field").html('"a dried up coffeebean? my every wish just came true!!" oldie ostrich shouts out loud.');
+				current_step = 4;
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'oken'){
+				$("#text_field").html('"correct!" le fancy hedgehog hollers and flies past robotprins\' head and drops his cool undies. they\'re a perfect fit!');
+				inventory.push('cool undies');
+				current_step = 4;		
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('perfect punching! the chest opens and inside a golden lollipop lies waiting. delish!');
+				current_step = 2;
+				inventory.push('a golden lollipop');
+				loc_status[current_loc] = 'done';
+			}			
+			else if(current_loc == 'dal'){
+				$("#text_field").html('"at long last I have the answer!" the little man of magic vociferates. robotprins is given a lava lamp as thanks. they were on sale.');
+				current_step = 3;
+				inventory.push('a lava lamp');
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'hydda'){
+				$("#text_field").html('"yeah, that was what I said. now I will go on my own vacation and no longer hinder your journey" the ball says and bounces away.');
+				$("#main").html('<img class="main_img" src="img/hydda1.png">');
+				current_step = 4;
+			}
+		}
+		else{
+			if(current_loc == 'stuga'){
+				$("#text_field").html('it appears that oldie ostrich did not appreciate the food he has been give. "oh no, you won\'t get off easy" he yells with his ostrichy voice.');
+				current_step = 2;
+			}
+			else if(current_loc == 'oken'){
+				$("#text_field").html('"incorrect!" le fancy hedgehog hollers and flies of in the opposite direction. robotprins can see him dropping something mid-flight, but he is too lazy to go check what it was.');
+				current_step = 4;
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('robotprins punched too much. his hand now hurts and he becomes sour. pH goes down :(');
+				ph = ph - 1;
+				$("#ph_div").html('pH: '+ph);				
+				current_step = 2;
+			}
+			else if(current_loc == 'dal'){
+				$("#text_field").html('"no, it doesn\'t have the right ring to it" the magical man murmurs and shoots a beam of light at robotprins. it doesn\'t really hurt robotprins so he tries something else.');			
+				current_step = 2;
+			}				
+			else if(current_loc == 'hydda'){
+				$("#text_field").html('"what!? that wasn\'t a very nice thing to say. you will regret this and get this" the ball pants.');			
+				current_step = 2;
+			}	
+		}
+		$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		$("#actions").empty();
+		$("#inventory").html(inventory.toString());
+	}
+
+	function show_inventory(){
+		$("#inventory").empty();
+		$.each(inventory, function(index, value){
+			$("#inventory").append(value+'<br>');
+		});
+		if(inventory.length < 1){
+			$("#inventory").html('Tomt');
+		}
+		$("#inventory").slideToggle();
+	}
+
+	function show_map(){
+		$("#"+current_loc).css('background-color', '#64D2E8');
+		$("#map_div").slideToggle();
+	}
+
+	function set_step(step){
+		current_step = step;
+		if(current_loc == 'skog' && current_step == 7){
+			inventory.push('a note that says "what"');
+			$("#main").html('<img class="main_img" src="img/skog5.png">');
+		}
+	}
+
+	function starta(){
+		current_loc = 'hotell';
+		current_step = 0;
+		$("#inventory_button").show();
+		$("#map_button").show();
+		$("#ph_div").show();
+		arrive();
+	}
+
+	function sur(){
+		var surisar = ['lemons', 'grumpy old ladies', 'sour milk', 'a small sized donkey', 'a sour dishcloth', 'sorrel'];
+		var surgubbar = {
+			'skog' : 'the forest',
+			'vattenfall' : 'the naked bad guy',
+			'oken' : 'the super-hedgehog',
+			'stuga' : 'oldie ostrich',
+			'dal' : 'magical mertil',
+			'hydda' : 'guarderball'
+		};
+		if(current_loc == 'hydda' && current_step != 2){
+			$("#text_field").html('ondman hits robotprins the hardest he dares with his sour fist.');
+			surhet = 2;
+		}
+		else{
+			$("#text_field").html(surgubbar[current_loc]+' throws '+surisar[Math.floor(Math.random() * 6)]+' in robotprins\' face and he becomes sour. <br> pH - 1!');
+			surhet = 1;
+		}
+		ph = ph - surhet;
+		$("#ph_div").html('pH: '+ph);
+		if(ph < 5){
+			$("#text_field").append(' robotprins becomes so sour he runs back home and cries in his sissy bed.');
+			if(current_loc == 'skog'){
+				$("#main").html('<img src="img/skog5.png">');
+			}
+			$("#button_div").html('<img src="img/ok.png" onclick="game_over();">');
+			$("#actions").empty();
+		}
+		else{
+			current_step = current_step + 1;
+			$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		}
+	}
+
+	function directions(){
+		$("#button_div").empty();
+		var directions = {};
+		directions['hotell'] = ['north'];
+		directions['skog'] = ['west', 'north', 'south', 'east'];
+		directions['vattenfall'] = ['north', 'east'];
+		directions['moln'] = ['west', 'north'];
+		directions['stuga'] = ['west', 'north', 'south', 'east'];
+		directions['oken'] = ['south', 'east'];
+		directions['dal'] = ['west', 'south'];
+		directions['hydda'] = ['south'];
+
+		$("#actions").html('<div id="directions"></div>')
+		$("#directions").width(35*directions[current_loc].length);
+		$.each(directions[current_loc], function(index, value){
+			$("#directions").append('<img src="img/'+value+'.png" onclick="walking(\''+value+'\');">');
+		});	
+	}
+
+	function walking(direction){
+		var walking = {
+			'hotell, north' : 'skog',
+			'skog, south' : 'hotell',
+			'skog, west' : 'vattenfall',
+			'skog, east' : 'moln',
+			'skog, north' : 'stuga',
+			'vattenfall, east' : 'skog',
+			'vattenfall, north' : 'oken',
+			'stuga, south' : 'skog',
+			'stuga, west' : 'oken',
+			'stuga, east' : 'dal',
+			'stuga, north' : 'hydda',
+			'moln, west' : 'skog',
+			'moln, north' : 'dal',
+			'oken, south' : 'vattenfall',
+			'oken, east' : 'stuga',
+			'dal, south' : 'moln',
+			'dal, west' : 'stuga',
+			'hydda, south' : 'stuga'
+		}
+
+		$("#"+current_loc).css('background-color', 'white');
+		current_loc = walking[current_loc+', '+direction];
+		$("#"+current_loc).css('background-color', '#64D2E8');
+		current_step = 0;
+		arrive();
+	}
+
+	function win(fusk){
+		fusk = fusk || false;
+		if(fusk){
+			$("#text_field").html('ondman also blew up in the big boom so I guess robotprins just saved the world again. yay!');
+			$("#button_div").html('<img src="img/ok.png" onclick="win();">');
+		}
+		else{
+			$('div').html('<div id="win_div" width="400px"><p>WIIIIIIIIIIIIIIIIIIIIIIIIIIIIN!!!!</p></div>');
+			if($.inArray('coola kalsingar', inventory) > -1){
+				$("#win_div").append('<p>+ robotprins is wearing cool undies;)</p>');
+			}
+		}
+		$("#win_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
+	}
+
+	function game_over(){
+		$('div').html('<div id="loser_div" width="400px"><p>GAAAAAAAAAAAME OOOOOOOOVER!!!!</p></div>');
+		if($.inArray('coola kalsingar', inventory) > -1){
+			$("#loser_div").append('<p>but robotprins is at least wearing cool undies.</p>');
+		}
+		$("#loser_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
+	}
+
+</script>

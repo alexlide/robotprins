@@ -1,0 +1,550 @@
+<script src="jquery-latest.js"></script>
+
+<html>
+<head>
+	<title>Robotprins - The spelet!</title>
+	  <link href="spel.css" rel="stylesheet" type="text/css">
+	<meta charset="utf-8"/>
+</head>
+<body>
+	<div id='wrapper'>
+		<h1><img style="width:340px" src="img/title.png"></h1>
+		<div id="inventory_button" style="display:none;">
+			<img src="img/inventory.png" onclick="show_inventory()">
+		</div>
+		<div id="inventory" style="display:none;"></div>
+		<div id='ph_div' style="display:none;">pH: 7</div>
+		<div id='main'>
+			<img id="start_img" src="img/robotprins.png">
+		</div>
+		<div id="location"></div>
+		<div id="textnbutton">
+			<div id='text_field'></div>
+			<div id='button_div'></div>
+		</div>
+		<div id='actions'>
+			<img id="start" src="img/start.png" onclick="starta()">
+		</div>
+		<div id="map_button" style="display:none;">
+			<img src="img/map.png"  onclick="show_map()">
+		</div>
+		<div id="map_div" style="display:none;">
+			<table id="map_table">
+				<tr>
+					<td class="empty_tile"></td>
+					<td id="hydda" class="tile">Ondmans hydda!</td>
+					<td class="empty_tile"></td>
+				</tr>
+				<tr>
+					<td id="oken" class="tile">Ökända öknen</td>
+					<td id="stuga"  class="tile">Struts-stugan</td>
+					<td id="dal" class="tile">Dundrande dalen</td>
+				</tr>				
+				<tr>
+					<td id="vattenfall" class="tile">Våta vattenfallet</td>
+					<td id="skog" class="tile">Skuggiga skogen</td>
+					<td id="moln" class="tile">Mjöliga molnet</td>
+				</tr>
+				<tr>
+					<td class="empty_tile"></td>
+					<td id="hotell" class="tile">Husliga hotellet</td>
+					<td class="empty_tile"></td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+	<div id="hidden_div" style="display: none;">
+		<img src="img/dal.png">
+		<img src="img/hotell.png">
+		<img src="img/hydda.png">
+		<img src="img/hydda1.png">
+		<img src="img/moln.png">
+		<img src="img/oken.png">
+		<img src="img/oken1.png">
+		<img src="img/oken2.png">
+		<img src="img/skog1.png">
+		<img src="img/skog2.png">
+		<img src="img/skog3.png">
+		<img src="img/skog5.png">
+		<img src="img/skugg.png">
+		<img src="img/stuga.png">
+		<img src="img/vattenfall.png">
+	</div>
+</body>
+</html>
+
+<script>
+	var current_loc;
+	var current_step;
+	var ph = 7;
+	var inventory = [];
+	var actions = {
+		'hotell' : ['get_text', 'directions'],
+		'skog' : ['get_text', 'check_inventory', 'directions', 'get_text', 'directions', 'sur', 'directions', 'get_text', 'directions'],
+		'vattenfall' : ['get_text', 'check_inventory', 'sur', 'directions', 'get_text', 'directions'],
+		'stuga' : ['get_text', 'choices', 'sur', 'directions', 'get_text', 'directions'],
+		'moln' : ['get_text', 'choices', 'directions'],
+		'oken' : ['get_text', 'directions', 'get_text', 'choices', 'directions'],
+		'dal' : ['get_text', 'choices', 'sur', 'directions'],
+		'hydda' : ['get_text', 'choices', 'sur', 'directions', 'get_text', 'sur', 'check_inventory', 'get_text', 'sur', 'get_text', 'sur', 'get_text', 'win']
+	};
+	var loc_status = {
+		'hotell' : 'none',
+		'skog' : 'none',
+		'vattenfall' : 'none',
+		'stuga' : 'none',
+		'moln' : 'none',
+		'oken' : 'none',
+		'dal' : 'none',
+		'hydda' : 'none'
+	}
+	var long_name = {
+		'hotell' : 'Husliga hotellet',
+		'skog' : 'Skuggiga skogen',
+		'vattenfall' : 'Våta vattenfallet',
+		'stuga' : 'Struts-stugan',
+		'moln' : 'Mjöliga molnet',
+		'oken' : 'Ökända öknen',
+		'dal' : 'Dundrande dalen',
+		'hydda' : 'Ondmans hydda!'
+	}
+
+	function arrive(){
+		$("#actions").empty();
+		if(current_loc == 'skog'){
+			if(loc_status[current_loc] == 'none' || loc_status[current_loc] == 'been'){
+				$("#main").html('<img class="main_img" src="img/skugg.png">');
+			}
+			else if(loc_status[current_loc] == 'advance'){
+				var skog = '<table> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				$("#main").html(skog);
+			}
+			else if(loc_status[current_loc] == 'done'){
+				$("#main").html('<img class="main_img" src="img/skog5.png">');
+			}
+		}
+		else{
+			$("#main").html('<img id="img_'+current_loc+'"" src="img/'+current_loc+'.png" class="main_img">');
+		}
+		$("#location").html('<p><strong>'+long_name[current_loc]+'</strong></p>');
+		if($.inArray('super bazooka', inventory) > -1){
+			$("#text_field").html('robotprins spränger upp allt med sin super bazooka och får tusen spänn');
+			inventory.push('tusen spänn');
+			if(current_loc == 'hydda'){
+				$("#button_div").html('<img src="img/ok.png" onclick="win(true);">');
+			}
+			else{
+				$("#button_div").html('<img src="img/ok.png" onclick="directions();">');				
+			}
+		}
+		else{
+			none = this.check_loc_status();
+			if(none){
+				var function_name = actions[current_loc][0];
+				var fn = window[function_name];
+				if(typeof fn === 'function') {
+				    fn();
+				}
+			}
+		}
+	}
+
+	function check_loc_status(){
+		if(loc_status[current_loc] == 'none'){
+			loc_status[current_loc] = 'been';
+			if(current_loc == 'oken'){
+				inventory.push('en förtorkad kaffeböna');
+			}
+			return true;
+		}
+		else if(loc_status[current_loc] == 'been'){
+			if(current_loc == 'skog'){
+				$("#text_field").html('det är liksom fortfarande helt mörkt i skuggiga skogen.');
+				current_step = 1;				
+			}
+			else if(current_loc == 'hotell'){
+				$("#text_field").html('det husliga hotellet är oerhört härligt och husligt.');
+				if($.inArray('en halv tvål', inventory) > -1 && ph < 14){
+					$("#text_field").append(' robotprins käkar lite av sin tvål och blir sjukt basiskt. pH is sikkk!');
+					ph = 14;
+				}
+				else if(ph < 7){
+					$("#text_field").append(' robotprins tar sig en lur och hans pH blir fint igen.');
+					ph = 7;
+				}
+				$("#ph_div").html('pH: '+ph);
+				current_step = 1;
+			}
+			else if(current_loc == 'stuga'){
+				$("#text_field").html('gubbstrutsen är hungrig. ge honom lite mat som den snälla robotprins du är.');
+				current_step = 1;
+			}
+			else if(current_loc == 'oken'){
+				$("#main").html('<img id="img_'+current_loc+'"" src="img/oken1.png" class="main_img">');
+				$("#text_field").html('nämen, ser man på! nu vart en sån där super-igel-kotte-hjälte-man här.');
+				current_step = 2;			
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('på molnet står kistan redo för att bankas.');
+				current_step = 1;
+			}
+			else if(current_loc == 'dal'){
+				$("#text_field").html('magiska män är ökända för att vara envisa med sina frågor. vad heter robotprins kompanjon?');
+				current_step = 1;
+			}
+			else if(current_loc == 'vattenfall'){
+				$("#text_field").html('ondingen är fortfarande naken och ilsken. nu blir det mer slagsmål.');
+				current_step = 1;
+			}	
+			else if(current_loc == 'hydda'){
+				$("#text_field").html('den trevlige bollvaktaren hälsar vänligt och än en gång han säger: \'vad är lösenordet\'');
+				current_step = 1;
+			}			
+		}
+		else if(loc_status[current_loc] == 'advance'){
+			if(current_loc == 'skog'){
+				$("#text_field").html('läskigt värre. vågar du tafsa på skogen?');
+				current_step = 4;
+			}
+		}
+		else if(loc_status[current_loc] == 'done'){
+			if(current_loc == 'skog'){
+				$("#text_field").html('robotprins tycker inte att skuggiga skogen är så läskig längre.');
+				current_step = 8;
+			}
+			else if(current_loc == 'stuga'){
+				$("#text_field").html('gubbstrutsen ser mätt och belåten ut.');
+				current_step = 5;
+			}
+			else if(current_loc == 'oken'){
+				$("#text_field").html('ödslig är öknen. den längtar efter någon att älska livet ut. men det blir inte robotprins. han går därifrån.');
+				$("#main").html('<img id="img_'+current_loc+'"" src="img/oken2.png" class="main_img">');
+				current_step = 4;			
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('på molnet står kistan öppen på vid gavel. har den ingen skam?');
+				current_step = 2;
+			}
+			else if(current_loc == 'dal'){
+				$("#text_field").html('dundret och blixteriet verkar aldrig ta slut i denna dal. party in da haus foreverz!!!');
+				current_step = 3;
+			}
+			else if(current_loc == 'vattenfall'){
+				$("#text_field").html('gubben i vattenfallet är nu god, men fortfarande naken och arg då han just fick vatten i näsan.');
+				current_step = 3;
+			}				
+		}
+		$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		return false;
+	}
+
+	function get_text(text){
+		$("#actions").empty();
+		if(current_loc == 'skog' && current_step == 7){
+			loc_status[current_loc] = 'done';
+		}
+		else if(current_loc == 'vattenfall' && current_step == 4 && text == 2){
+			ph = 14;
+			$("#ph_div").html('pH: '+ph);	
+		}
+		text = text || 0;
+		var next_text = text + 1;
+		var all_texts = {
+			'hotell0' : ['robotprins och hans trogne vän robotpudding har åkt på semester till fjärran land.', 'äntligen kan de vila utan att oroa sig för dumma ondingar som ondar sönder deras vardag.', 'husliga hotellet där de bor är värsta mys och TV är stor och grann så den slår robotprins på.',	'ajajaj! utifrån den TV-apparat det sprudlar hemska nyheter om att ondman har tagit sig till fjärran land för att hålla på och onda sig.', 'det här var ju typ inte bra, tänker robotprins. bäst jag räddar lite värld, fortsätter tanken.',
+				'på med byxorna och ut på äventyr i fjärran land bär det.', 'hjälp robotprins att besegra ondman, men se till att han inte blir för sur. då blir det game over!'],
+			'skog0' : ['värst vad mörkt det var i skuggiga skogen.'],
+			'skog3' : ['men usch vilken läskig skog. allt ser argligt ut. vågar man titta närmare på nåt månn tro?'],
+			'skog7' : ['oj! det elaka ansiktet på stenen var bara ditmålat. på baksidan sitter en lapp som det står "vad" på. bäst att plocka upp. hmmmm. vad betyder "vad"?'],
+			'vattenfall0' : ['det våta vattenfallet är vått och härligt. är det någon som tar sig en dusch där i?', 'jajamensannn. en av ondmans ondskefulla undersåtar står där nynnandes i sin födelsedagsdräkt och duschar på.', 'efter en kvart upptäcker han robotprins och den busen gillar inte att bli störd i duschen. dags för slagsmål!'],
+			'vattenfall4' : ['"du har räddat mig från den onda förbannelsen. nu är jag en god man igen." tackar den spritt språngande mannen.', '"och som goda män gör bjuder jag gärna på lite tvål". robotprins får en halv tvål.', 'robotprins kan givetvis inte motstå frestelsen och tar en mumsebit från tvålen. nu blev han basisk. upp med pH!'],
+			'oken0' : ['öknen är både ökänd och ödslig och öcklig. en kaktus är din enda vän.', 'men vad är det där som ligger och skräpar? en förtorkad kaffeböna förstås. dags för upptagning!', 'inte fanns det något annat roligt här så man kan ju gå iväg. luktar lite kottigt dock.'],
+			'oken2' : ['kolla vilka spänstiga kottmuskler han har. "spanar du in mina pang-pang-pinnar?" fnystar han.', 'robotprins hinner inte svara innan kottenisse säger något annat.', '"vet du hur jag blivit så här mucklig pucklig? jo, jag äter endast den bästa av rotfrukter"', '"vilken är den bästa av rotfrukter månne?" frågar mr sexy kott. (speciellt bra om den är möglig).'],
+			'moln0' : ['robotprins kommer till ett fantastiskt moln som svävar över molnen och mjöligt var det här. och en kista oxå!', 'robotprins har ingen nyckel så han tänkte banka upp den med näven.', '"bäst att banka så många gånger som del av mig är robot eller prins" tänker robotprins.', 'hur många gånger ska han banka?'],
+			'stuga0' : ['robotprins finner en strutsig stuga och stugan har en dörr.', 'den öppnas av en mycket hungrig gubbstruts som tjuter så hemskt.', '"äta, äta! jag vill ha något att äta!!!"', 'ge något ätligt till gubbstrutsen?'],
+			'stuga4' : ['nu blev han glad och när han är glad vill han berätta hemligheter.', '"bakom den mörkaste sten i skuggiga skogen står lösenordet till ondmans hydda" viskar den gubbstruts.'],
+			'dal0' : ['i den dundrande dalen är det blixt och sånt där. men varför?', 'jo, minsanns och dars står en magisk mangubbe mitt däri och skjuter ljusestrålar omkring sig.', 'när han upptäcker robotprins stirrar han med dödestirren rätt i hans ögon, men vänder sen sitt blick mot dennes kompanjon.', '"vad kallar du den metalliska efterrätt du har med dig?" frågar mansmagikern med en sliskig röst.', '"svara annars ljusar jag dig!" väser magiman.'],
+			'hydda0' : ['vad är det här för något? ser ut som en väldigt ondsint hydda där någon ond gubbe kanske bor.', 'och framför står en ståtlig boll och vaktar. månske en vaktarbolle?', '"nämen, hej och hopp" hälsar bollen. "visste ni att självaste ondman bor i denna hydda här bakom mig?"', '"han typ är här på semester i fjärran land och om han får lite tid över från sitt semestrande kanske han går ut och ondar ner hela stället"', '"jag tror hans spamassagelerterapigurkmacka precis håller på att ta slut. snart är det god tid för onderi" nämner bollen angenämnt.', 'ajaj! det här må vi stoppa och robotprins är just mannen för detta.', '"ur vägen, bollskalle! jag ska ge ondman ett kokande stryk!" hojtar robotprins.', '"tyvärr kan jag inte tillåta detta utan att du ger mig det korrekta lösenordet." konstaterar bollen.', '"vad är lösenordet"'],
+			'hydda4' : ['robotprins ser ett par ondsinta ögon inifrån hyddan. ONDMAN!', '"din envise lille parvel. alltid skall du vara till besvär för min härliga ondska" bistrar ondman.', '"nu vill jag slåss och vara ond!! slaxmål på dig!!!" bräker ondman med sin mörkrets stämma.'],
+			'hydda7' : ['"hahaha! det där gör ju typ inte alls ont liksom" gormar ondman. "typ kolla på det här istället."'],
+			'hydda9' : ['"neeeeej!! inte en magisk gyllene godhets slickepinn! den svider i mina elakhetsådror. men jag ger inte upp än!" påstår ondman.'],
+			'hydda11' : ['än en gång faller rättvisans gyllene slickepinne rätt i pannehuvet på ondman från robotprins fasta hand.', '"amen, liksom, aj typ!" fjortar ondman. "det var droppen! fakk dis!', 'ondman hoppar på sin flyktflotte och seglar ut på det där havet som var bredvid.', 'det verkar som om robotprins och robotpudding än en gång räddat en massa folkisar med din finfina hjälp. bra jobbat!']
+		};
+		$("#text_field").html(all_texts[current_loc+current_step][text]);
+		if(next_text == all_texts[current_loc+current_step].length){
+			current_step = current_step + 1;
+			$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		}
+		else{
+			$("#button_div").html('<img src="img/ok.png" onclick="get_text('+next_text+');">')
+		}
+	}
+
+	function check_inventory(){
+		if(current_loc == 'skog'){
+			if($.inArray('lavalampa', inventory) > -1){
+				$("#text_field").html('vilken tur att robotprins har en fin lavalampa. nu ser man desto bättre.');
+				var skog = '<table id="skog_table"> <tr> <td rowspan="2"><img onclick="set_step(5), '+actions[current_loc][5]+'()" src="img/skog1.png"></td> <td><img onclick="set_step(5), '+actions[current_loc][5]+'()", src="img/skog2.png"></td> </tr> <tr> <td><img onclick="set_step(7), '+actions[current_loc][7]+'()", src="img/skog3.png"></td> </tr> </table>';
+				$("#main").html(skog);
+				current_step = 3;
+				loc_status[current_loc] = 'advance';
+			}
+			else{
+				$("#text_field").html('typ för mörkt för att göra nåt. trist. gå nån annanstans vet jag.');
+				current_step = 2;
+			}
+		}
+		else if(current_loc == 'vattenfall'){
+			if($.inArray('en gyllene slickepinne', inventory) > -1){
+				$("#text_field").html('robotprins slår ondingen med den gyllene slickepinnen. det visar sig att den är magisk och gör ondingar goda.');
+				current_step = 4;
+				inventory.push('en halv tvål');
+				loc_status[current_loc] = 'done';
+			}
+			else{
+				$("#text_field").html('robotprins boxar ondingen i bröstvårtan, men det gör honom bara argare.');
+				current_step = 2;
+			}
+		}
+		else if(current_loc == 'hydda'){
+			if($.inArray('en gyllene slickepinne', inventory) > -1){	
+				$("#text_field").html('robotprins slår ondman med sin gyllene slickepinne. det verkar vara bra för ondman blir lite ledsen.');
+				current_step = 9;
+			}
+			else{
+				$("#text_field").html('robotprins bankar lite med sina fjolliga robothänder på ondman.');
+				current_step = 7;
+			}
+		}
+		$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		$("#inventory").html(inventory.toString());
+	}
+
+	function choices(){
+		$("#button_div").empty();	
+		if(current_loc == 'stuga'){
+			if($.inArray('en förtorkad kaffeböna', inventory) > -1){
+				$("#actions").html('<select id="stuga_dropdown" onchange="check_choice(this, \'en förtorkad kaffeböna\')"><option>välj</option><option>en efterrätt</option><option>en omelett</option><option>en förtorkad kaffeböna</option></select>');				
+			}
+			else{
+				$("#actions").html('<select id="stuga_dropdown" onchange="check_choice(this, \'en förtorkad kaffeböna\')"><option>välj</option><option>en efterrätt</option><option>en omelett</option><option>en cigarett</option></select>');
+			}
+		}
+		else if(current_loc == 'oken'){
+			$("#actions").html('<select id="oken_dropdown" onchange="check_choice(this, \'potatis\')"><option>välj</option><option>potatis</option><option>palsternacka</option><option>sten</option></select>');
+		}
+		else if(current_loc == 'moln'){
+			$("#actions").html('<select id="moln_dropdown" onchange="check_choice(this, \'en halv gång\')"><option>välj</option><option>en halv gång</option><option>en gång</option><option>15 gånger</option></select>');		
+		}
+		else if(current_loc == 'dal'){
+			$("#actions").html('<select id="dal_dropdown" onchange="check_choice(this, \'robotpudding\')"><option>välj</option><option>maskintårta</option><option>robotpudding</option><option>wienerbröddz</option></select>');				
+		}
+		else if(current_loc == 'hydda'){
+			if($.inArray('vad-lappen', inventory) > -1){
+				$("#actions").html('<select id="hydda_dropdown" onchange="check_choice(this, \'vad\')"><option>välj</option><option>vad</option><option>vad</option><option>vad</option></select>');							
+			}
+			else{
+				$("#actions").html('<select id="hydda_dropdown" onchange="check_choice(this, \'vad\')"><option>välj</option><option>bollar luktar apa. speciellt de röda.</option><option>hjälmar är det fulaste som finns, förutom bollar då.</option><option>du är sjukt trög i huvet, bollfjantefulskit!</option></select>');							
+			}
+		}
+	}
+
+	function check_choice(element, answer){
+		if(element.options[element.selectedIndex].value == answer){
+			if(current_loc == 'stuga'){
+				$("#text_field").html('"en förtorkad kaffeböna! det är det jag vill haaaAaAaa!!" hojtar gubbstrutsen.');
+				current_step = 4;
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'oken'){
+				$("#text_field").html('"rätt!" ropar le fancy quott och flyger rätt över robotprins huvud och tappar sina coola kalsingar. de passar perfekt!');
+				inventory.push('coola kalsingar');
+				current_step = 4;		
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('perfekt bankeri! kistan öppnas och inuti hittar robotprins en gyllene slickepinne. mums!');
+				current_step = 2;
+				inventory.push('en gyllene slickepinne');
+				loc_status[current_loc] = 'done';
+			}			
+			else if(current_loc == 'dal'){
+				$("#text_field").html('"äntligen har jag svaret!" utbrister den lille man av magi. som tack får robotprins en lavalampa. de var på rea.');
+				current_step = 3;
+				inventory.push('lavalampa');
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'hydda'){
+				$("#text_field").html('"ja, det var ju precis det jag sa. nu ska jag inte stå ivägen längre utan tar själv lite välförtjänt semester" tycker bollen och studsar iväg.');
+				$("#main").html('<img class="main_img" src="img/hydda1.png">');
+				current_step = 4;
+			}
+		}
+		else{
+			if(current_loc == 'stuga'){
+				$("#text_field").html('gubbstrutsen gillade visst inte maten. "nej, nu får du inte lätt" ropar han med sin strutsiga röst.');
+				current_step = 2;
+			}
+			else if(current_loc == 'oken'){
+				$("#text_field").html('"fel!" ropar le fancy quott och flyger iväg åt andra hållet. robotprins ser att han tappar nåt i fjärran, men orkar inte gå bort och kolla vad det är.');
+				current_step = 4;
+				loc_status[current_loc] = 'done';
+			}
+			else if(current_loc == 'moln'){
+				$("#text_field").html('robotprins bankade för många gånger. han får ont i näven och blir lite sur. ner med pH. :(');
+				ph = ph - 1;
+				$("#ph_div").html('pH: '+ph);				
+				current_step = 2;
+			}
+			else if(current_loc == 'dal'){
+				$("#text_field").html('"nä, det känns helt fel" grymtar den magiske mannen och skjuter ljus på robotprins. har ingen större effekt så han prövar nåt annat.');			
+				current_step = 2;
+			}				
+			else if(current_loc == 'hydda'){
+				$("#text_field").html('"nä, det där var inte alls så snällt sagt. det ska du ångra och här ska du få" flämtar bollen.');			
+				current_step = 2;
+			}	
+		}
+		$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		$("#actions").empty();
+		$("#inventory").html(inventory.toString());
+	}
+
+	function show_inventory(){
+		$("#inventory").empty();
+		$.each(inventory, function(index, value){
+			$("#inventory").append(value+'<br>');
+		});
+		if(inventory.length < 1){
+			$("#inventory").html('tomt');
+		}
+		$("#inventory").slideToggle();
+	}
+
+	function show_map(){
+		$("#"+current_loc).css('background-color', '#64D2E8');
+		$("#map_div").slideToggle();
+	}
+
+	function set_step(step){
+		current_step = step;
+		if(current_loc == 'skog' && current_step == 7){
+			inventory.push('vad-lappen');
+			$("#main").html('<img class="main_img" src="img/skog5.png">');
+		}
+	}
+
+	function starta(){
+		current_loc = 'hotell';
+		current_step = 0;
+		$("#inventory_button").show();
+		$("#map_button").show();
+		$("#ph_div").show();
+		arrive();
+	}
+
+	function sur(){
+		var surisar = ['citroner', 'sura gamla tanter', 'sur mjölk', 'en sur liten åsna', 'en surlig disktrasa', 'harsyra'];
+		var surgubbar = {
+			'skog' : 'skogen',
+			'vattenfall' : 'den nakne ondingen',
+			'oken' : 'super-igelkotten',
+			'stuga' : 'gubbstrutsen',
+			'dal' : 'magiska mertil',
+			'hydda' : 'vaktarbollen'
+		};
+		if(current_loc == 'hydda' && current_step != 2){
+			$("#text_field").html('ondman slår robotprins sitt allra hårdligaste med sin sura knytnäve.');
+			surhet = 2;
+		}
+		else{
+			$("#text_field").html(surgubbar[current_loc]+' kastar '+surisar[Math.floor(Math.random() * 6)]+' i fejan på robotprins som blir sur. <br> pH - 1!');
+			surhet = 1;
+		}
+		ph = ph - surhet;
+		$("#ph_div").html('pH: '+ph);
+		if(ph < 5){
+			$("#text_field").append(' robotprins blir så sur att han springer hem och gråter i sängen.');
+			if(current_loc == 'skog'){
+				$("#main").html('<img src="img/skog5.png">');
+			}
+			$("#button_div").html('<img src="img/ok.png" onclick="game_over();">');
+			$("#actions").empty();
+		}
+		else{
+			current_step = current_step + 1;
+			$("#button_div").html('<img src="img/ok.png" onclick="'+actions[current_loc][current_step]+'();">');
+		}
+	}
+
+	function directions(){
+		$("#button_div").empty();
+		var directions = {};
+		directions['hotell'] = ['north'];
+		directions['skog'] = ['west', 'north', 'south', 'east'];
+		directions['vattenfall'] = ['north', 'east'];
+		directions['moln'] = ['west', 'north'];
+		directions['stuga'] = ['west', 'north', 'south', 'east'];
+		directions['oken'] = ['south', 'east'];
+		directions['dal'] = ['west', 'south'];
+		directions['hydda'] = ['south'];
+
+		$("#actions").html('<div id="directions"></div>')
+		$("#directions").width(35*directions[current_loc].length);
+		$.each(directions[current_loc], function(index, value){
+			$("#directions").append('<img src="img/'+value+'.png" onclick="walking(\''+value+'\');">');
+		});	
+	}
+
+	function walking(direction){
+		var walking = {
+			'hotell, north' : 'skog',
+			'skog, south' : 'hotell',
+			'skog, west' : 'vattenfall',
+			'skog, east' : 'moln',
+			'skog, north' : 'stuga',
+			'vattenfall, east' : 'skog',
+			'vattenfall, north' : 'oken',
+			'stuga, south' : 'skog',
+			'stuga, west' : 'oken',
+			'stuga, east' : 'dal',
+			'stuga, north' : 'hydda',
+			'moln, west' : 'skog',
+			'moln, north' : 'dal',
+			'oken, south' : 'vattenfall',
+			'oken, east' : 'stuga',
+			'dal, south' : 'moln',
+			'dal, west' : 'stuga',
+			'hydda, south' : 'stuga'
+		}
+
+		$("#"+current_loc).css('background-color', 'white');
+		current_loc = walking[current_loc+', '+direction];
+		$("#"+current_loc).css('background-color', '#64D2E8');
+		current_step = 0;
+		arrive();
+	}
+
+	function win(fusk){
+		fusk = fusk || false;
+		if(fusk){
+			$("#text_field").html('ondman sprängdes oxå i smällen så nu räddade robotprins världen verkade det som.');
+			$("#button_div").html('<img src="img/ok.png" onclick="win();">');
+		}
+		else{
+			$('div').html('<div id="win_div" width="400px"><p>WIIIIIIIIIIIIIIIIIIIIIIIIIIIIN!!!!</p></div>');
+			if($.inArray('coola kalsingar', inventory) > -1){
+				$("#win_div").append('<p>+ robotprins har grymt coola kalsingar på sig ;)</p>');
+			}
+		}
+		$("#win_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
+	}
+
+	function game_over(){
+		$('div').html('<div id="loser_div" width="400px"><p>GAAAAAAAAAAAME OOOOOOOOVER!!!!</p></div>');
+		if($.inArray('coola kalsingar', inventory) > -1){
+			$("#loser_div").append('<p>men robotprins har iaf grymt coola kalsingar på sig.</p>');
+		}
+		$("#loser_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
+	}
+
+</script>
