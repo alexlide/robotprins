@@ -55,7 +55,7 @@
 	</div>
 	<div id="hidden_div" style="display: none;">
 		<img src="img/dal.png">
-		<img src="img/hotell.png">
+		<img src="img/hotell_en.png">
 		<img src="img/hydda.png">
 		<img src="img/hydda1.png">
 		<img src="img/moln.png">
@@ -123,9 +123,9 @@
 				$("#main").html('<img class="main_img" src="img/skog5.png">');
 			}
 		}
-		else{
-			$("#main").html('<img id="img_'+current_loc+'"" src="img/'+current_loc+'.png" class="main_img">');
-		}
+		else if(current_loc == 'hotell') $("#main").html('<img id="img_'+current_loc+'"" src="img/hotell_en.png" class="main_img">');
+		else $("#main").html('<img id="img_'+current_loc+'"" src="img/'+current_loc+'.png" class="main_img">');
+
 		$("#location").html('<p><strong>'+long_name[current_loc]+'</strong></p>');
 		if($.inArray('super bazooka', inventory) > -1){
 			$("#text_field").html('robotprins blows everything up with his super bazooka and gets a thousand bucks');
@@ -380,7 +380,7 @@
 		}
 		else{
 			if(current_loc == 'stuga'){
-				$("#text_field").html('it appears that oldie ostrich did not appreciate the food he has been give. "oh no, you won\'t get off easy" he yells with his ostrichy voice.');
+				$("#text_field").html('it appears that oldie ostrich did not appreciate the food he has been given. "oh no, you won\'t get off easy" he yells with his ostrichy voice.');
 				current_step = 2;
 			}
 			else if(current_loc == 'oken'){
@@ -531,7 +531,7 @@
 		}
 		else{
 			$('div').html('<div id="win_div" width="400px"><p>WIIIIIIIIIIIIIIIIIIIIIIIIIIIIN!!!!</p></div>');
-			if($.inArray('coola kalsingar', inventory) > -1){
+			if($.inArray('cool undies', inventory) > -1){
 				$("#win_div").append('<p>+ robotprins is wearing cool undies;)</p>');
 			}
 		}
@@ -540,8 +540,8 @@
 
 	function game_over(){
 		$('div').html('<div id="loser_div" width="400px"><p>GAAAAAAAAAAAME OOOOOOOOVER!!!!</p></div>');
-		if($.inArray('coola kalsingar', inventory) > -1){
-			$("#loser_div").append('<p>but robotprins is at least wearing cool undies.</p>');
+		if($.inArray('cool undies', inventory) > -1){
+			$("#loser_div").append('<p>but at least robotprins is wearing cool undies.</p>');
 		}
 		$("#loser_div").append('<img id="again" src="img/again.png" onclick="location.reload();">')
 	}
