@@ -250,7 +250,7 @@
 		text = text || 0;
 		var next_text = text + 1;
 		var all_texts = {
-			'hotell0' : ['robotprins and his faithful companion robotpudding are on vacation in a faraway country.', 'finally the some well-deserved rest from evil meanies that annoying them with their malignity', 'the homey hotel, where they are staying, is like supercozy with like a huge flatscreen TV that is always turned on.', 'dang and doodles! from said TV the news of ondmans arrival to faraway land blurts out.', 'this is totally NOT good, robotprins thinks to himself. I\'d better go save some world now.', 'time for adventure! you gots to helps robotprins defeat ondman, but keep a close watch on his pH because if robotprins becomes to sour it\'s game over!'],
+			'hotell0' : ['robotprins and his faithful companion robotpudding are on vacation in a faraway country.', 'finally the some well-deserved rest from evil meanies that annoying them with their malignity', 'the homey hotel, where they are staying, is like supercozy with like a huge flatscreen TV that is always turned on.', 'dang and doodles! from the previously mentioned TV the news of ondmans arrival to faraway land blurts out.', 'this is totally NOT good, robotprins thinks to himself. I\'d better go save some world now.', 'time for adventure! you gots to helps robotprins defeat ondman, but keep a close watch on his pH because if robotprins becomes to sour it\'s game over!'],
 			'skog0' : ['the shadowy forest is quite dark. one might even call it pitch-black.'],
 			'skog3' : ['yikes in the henhouse! everything looks rather vicious. does one dare to take a close look perhaps?'],
 			'skog7' : ['hey! that mean face was only painted on that rock. on the backside of it there is a note that says "what". better pick it up. what does "what" mean?'],
@@ -261,7 +261,7 @@
 			'moln0' : ['robotprins arrives at a marvelous cloud that soars above the clouds and is very floury. and it carries a chest!', 'robotprins owns no key but the solution is simple. he will punch the chest open.', '"I\'d better punch as many times as I am robot and prince" robotprins reckons.', 'how many times should he punch the chest?'],
 			'stuga0' : ['robotprins stumbles upon a ostrichy cabin. the cabin has a door.', 'the door is opened by a very hungry oldie ostrich and he is screeching at the top of his lungs.', '"eat, eat! I want something to eat!!!"', 'give oldie ostrich something edible?'],
 			'stuga4' : ['oldie ostrich is now pleased and when he is pleased he enjoys telling secrets.', '"the darkest of stones in the shadowy forest holds the secret to entering ondmans hut" oldie ostrich whispers gently in robotprins\' metallic ear.'],
-			'dal0' : ['in the thundering valley there are lots of lightnings and stuff. but why?', 'the answer is that a magical manguy is shooting beams and lazers in the air.', 'when he notices robotprins\' precense he looks at him with a deathly stare, but soon averts his gaze upon robotprins\' sidekick.', '"what do you can the metallic dessert by your side?" the manmagician asks with a sleezy voice.', '"answer or I will light you!" magicman hisses.'],
+			'dal0' : ['in the thundering valley there are lots of lightnings and stuff. but why?', 'the answer is that a magical manguy is shooting beams and lazers in the air.', 'when he notices robotprins\' precense he looks at him with a deathly stare, but soon averts his gaze upon robotprins\' sidekick.', '"what do you call the metallic dessert by your side?" the manmagician asks with a sleezy voice.', '"answer or I will light you!" magicman hisses.'],
 			'hydda0' : ['what is this for something? looks like a pretty evily hut where someone evil might live.', 'in front of the hut a handsome ball stand guard. a guarderball perhaps?', '"deary me, hi there and hello" the ball greets robotprins. "are you aware that the one and only ondman resides within the hut behind me?"', '"faraway country is his favorite vacation spot and would he get some spare time from his vacationing he might just go outside and evil up the premises"', '"I believe his spa massage therapy cucumber sandwich is about to finish so quite soon it will be evil time." the ball politely mentions.', 'dear daniels dingo! we can\'t let ondman loose on this beautiful country, but luckily robotprins is just the man to stop him.', '"outta my way, ballface! I\'ll give that ondman a beating he will soon forget!" robotprins procounces.', '"unfortunatly I can\'t let you do that unless you give the correct password." the ball explains.', '"what is the password"'],
 			'hydda4' : ['robotprins spots a pair of vicious eyes from within the hut. ONDMAN!', '"you stubborn nincompoop. why must you always disturb my wonderous wickedness" ondman sulks.', '"I want to fight and be evil!! fisticuffs on you!!!" ondman bellows in his darkest voice.'],
 			'hydda7' : ['"hahaha! that totally like doesn\'t hurt at all" ondman rants. "like check out my fierce comeback. all kapow and stuff!"'],
@@ -414,7 +414,7 @@
 			$("#inventory").append(value+'<br>');
 		});
 		if(inventory.length < 1){
-			$("#inventory").html('Tomt');
+			$("#inventory").html('Empty');
 		}
 		$("#inventory").slideToggle();
 	}
